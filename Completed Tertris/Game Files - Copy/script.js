@@ -456,13 +456,13 @@ function placeTetromino() {
         
         // Progressive reduction as boss level increases
         if (currentBoss >= 2) {
-          healReduction = bossHealInterval * 0.15 * reductionMultiplier;
+          healReduction = bossHealInterval * 0.175 * reductionMultiplier;
         }
         if (currentBoss >= 4) {
-          healReduction = bossHealInterval * 0.125 * reductionMultiplier;
+          healReduction = bossHealInterval * 0.15 * reductionMultiplier;
         }
         if (currentBoss >= 5) {
-          healReduction = bossHealInterval * 0.1 * reductionMultiplier; // Boss 5: 10%
+          healReduction = bossHealInterval * 0.125 * reductionMultiplier; // Boss 5: 12.5%
         }
         
         bossHealTimer = Math.max(0, bossHealTimer - healReduction);
@@ -470,14 +470,14 @@ function placeTetromino() {
 
       // Reduce speed ability timer (boss 3+)
       if (currentBoss >= 2 && !bossSpeedActive) {
-        let speedReduction = bossSpeedInterval * 0.15 * reductionMultiplier;
+        let speedReduction = bossSpeedInterval * 0.2 * reductionMultiplier;
         
         // Progressive reduction for higher bosses
         if (currentBoss >= 4) {
-          speedReduction = bossSpeedInterval * 0.125 * reductionMultiplier; // Boss 4: 10%
+          speedReduction = bossSpeedInterval * 0.15 * reductionMultiplier; // Boss 4: 15%
         }
         if (currentBoss >= 5) {
-          speedReduction = bossSpeedInterval * 0.1 * reductionMultiplier; // Boss 5: 7.5%
+          speedReduction = bossSpeedInterval * 0.125 * reductionMultiplier; // Boss 5: 12.5%
         }
         
         bossSpeedTimer = Math.max(0, bossSpeedTimer - speedReduction);
@@ -485,11 +485,11 @@ function placeTetromino() {
 
       // Reduce immune ability timer (boss 4+)
       if (currentBoss >= 3 && !bossImmuneActive) {
-        let immuneReduction = bossImmuneInterval * 0.15 * reductionMultiplier;
+        let immuneReduction = bossImmuneInterval * 0.2 * reductionMultiplier;
         
         // Progressive reduction for final boss
         if (currentBoss >= 4) {
-          immuneReduction = bossImmuneInterval * 0.10 * reductionMultiplier;
+          immuneReduction = bossImmuneInterval * 0.15 * reductionMultiplier;
         }
         
         bossImmuneTimer = Math.max(0, bossImmuneTimer - immuneReduction);
@@ -749,7 +749,7 @@ function loop() {
       } else {
         // Set max health for new boss
         if (currentBoss === 1) {
-          bossMaxHealth = 350; // Second boss has 600 max HP
+          bossMaxHealth = 300; // Second boss has 600 max HP
           comboTexts.push({
             text: 'SECOND BOSS APPEAR!',
             timer: 180,
@@ -763,7 +763,7 @@ function loop() {
             y: 10 * grid
           });
         } else if (currentBoss === 2) {
-          bossMaxHealth = 400; // Third boss has 800 max HP
+          bossMaxHealth = 350; // Third boss has 800 max HP
           comboTexts.push({
             text: 'THIRD BOSS APPEAR!',
             timer: 180,
