@@ -794,7 +794,7 @@ function loop() {
           // Final boss - unkillable
           bossMaxHealth = Infinity;
           bossImmuneInterval = 900; // 15 seconds
-          ossHealInterval = 900; // 15 seconds
+          bossHealInterval = 900; // 15 seconds
           meterFillRate = 0.11;
           comboTexts.push({
             text: 'FINAL BOSS APPEAR!',
@@ -1169,7 +1169,7 @@ if (!gameOver && !paused && currentBoss >= 2 && bossAlive) {
   if (tetromino && !gameOver) {
     // Only apply gravity if not paused
     if (!paused) {
-      let dropFrames = Math.max(5, 35 - (level - 1) * 3); // gravity speed scales with level
+      let dropFrames = 50
       // Apply speed boost if boss speed is active
       if (bossSpeedActive) {
         dropFrames = Math.max(2, dropFrames - 15); // Much faster falling
@@ -1352,82 +1352,89 @@ if (currentBoss >= 3 && bossAlive) {
   context.restore();
 
   // === Right Sidebar: Next piece, Score, Combo, Lines ===
-  const sidebarX = colWidth * 2 + 20;
-  // Next piece preview box
-  const previewBoxWidth = colWidth - 40;
-  const previewBoxHeight = previewBoxWidth; // square
-  const previewBoxX = sidebarX;
-  const previewBoxY = 20;
+const sidebarX = colWidth * 2 + 20;
+// Next piece preview box
+const previewBoxWidth = colWidth - 40;
+const previewBoxHeight = previewBoxWidth; // square
+const previewBoxX = sidebarX;
+const previewBoxY = 20;
 
-  // Preview background and label
-  context.fillStyle = '#111';
-  context.fillRect(previewBoxX, previewBoxY, previewBoxWidth, previewBoxHeight);
-  context.strokeStyle = 'white';
-  context.lineWidth = 2;
-  context.strokeRect(previewBoxX, previewBoxY, previewBoxWidth, previewBoxHeight);
-  context.fillStyle = 'white';
-  context.font = 'bold 16px monospace';
-  context.textAlign = 'center';
-  context.fillText("Next", previewBoxX + previewBoxWidth / 2, previewBoxY + 15);
+// Preview background and label
+context.fillStyle = '#111';
+context.fillRect(previewBoxX, previewBoxY, previewBoxWidth, previewBoxHeight);
+context.strokeStyle = 'white';
+context.lineWidth = 2;
+context.strokeRect(previewBoxX, previewBoxY, previewBoxWidth, previewBoxHeight);
+context.fillStyle = 'white';
+context.font = 'bold 16px monospace';
+context.textAlign = 'center';
+context.fillText("Next", previewBoxX + previewBoxWidth / 2, previewBoxY + 15);
 
-  // Draw next tetromino in the preview area (only if not hidden by event or boss is dead)
-  if (!(currentEvent === 'HIDE_NEXT_BLOCK' && events.HIDE_NEXT_BLOCK.active) || !bossAlive) {
-    const nextName = nextTetromino.name;
-    const matrix = nextTetromino.matrix;
-    const previewGrid = Math.floor(grid * 0.6); // scale blocks down
-    const pieceWidth = matrix[0].length * previewGrid;
-    const pieceHeight = matrix.length * previewGrid;
-    const startX = previewBoxX + (previewBoxWidth / 2 - pieceWidth / 2);
-    const startY = previewBoxY + (previewBoxHeight / 2 - pieceHeight / 2);
+// Draw next tetromino in the preview area (only if not hidden by event or boss is dead)
+if (!(currentEvent === 'HIDE_NEXT_BLOCK' && events.HIDE_NEXT_BLOCK.active) || !bossAlive) {
+  const nextName = nextTetromino.name;
+  const matrix = nextTetromino.matrix;
+  const previewGrid = Math.floor(grid * 0.6); // scale blocks down
+  const pieceWidth = matrix[0].length * previewGrid;
+  const pieceHeight = matrix.length * previewGrid;
+  const startX = previewBoxX + (previewBoxWidth / 2 - pieceWidth / 2);
+  const startY = previewBoxY + (previewBoxHeight / 2 - pieceHeight / 2);
 
-    for (let r = 0; r < matrix.length; r++) {
-      for (let c = 0; c < matrix[r].length; c++) {
-        if (matrix[r][c]) {
-          const x = startX + c * previewGrid;
-          const y = startY + r * previewGrid;
-          const image = tetrominoImages[nextName];
-          if (image && image.complete && image.naturalHeight !== 0) {
-            context.drawImage(image, x, y, previewGrid - 1, previewGrid - 1);
-          } else {
-            context.fillStyle = colors[nextName];
-            context.fillRect(x, y, previewGrid - 1, previewGrid - 1);
-          }
+  for (let r = 0; r < matrix.length; r++) {
+    for (let c = 0; c < matrix[r].length; c++) {
+      if (matrix[r][c]) {
+        const x = startX + c * previewGrid;
+        const y = startY + r * previewGrid;
+        const image = tetrominoImages[nextName];
+        if (image && image.complete && image.naturalHeight !== 0) {
+          context.drawImage(image, x, y, previewGrid - 1, previewGrid - 1);
+        } else {
+          context.fillStyle = colors[nextName];
+          context.fillRect(x, y, previewGrid - 1, previewGrid - 1);
         }
       }
     }
-  } else {
-    // Show "?" when next block is hidden
-    context.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    context.font = 'bold 48px monospace';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText("?", previewBoxX + previewBoxWidth / 2, previewBoxY + previewBoxHeight / 2);
   }
-
-  // Score/Combo/Lines information box
-  const scoreBoxWidth = colWidth - 40;
-  const scoreBoxHeight = 120;
-  const scoreBoxX = sidebarX;
-  const scoreBoxY = previewBoxY + previewBoxHeight + 20;
-
-  context.fillStyle = '#111';
-  context.fillRect(scoreBoxX, scoreBoxY, scoreBoxWidth, scoreBoxHeight);
-  context.strokeStyle = 'white';
-  context.lineWidth = 2;
-  context.strokeRect(scoreBoxX, scoreBoxY, scoreBoxWidth, scoreBoxHeight);
-
-  // Draw score/combo/lines text inside box
-  context.fillStyle = 'white';
-  context.font = 'bold 18px monospace';
+} else {
+  // Show "?" when next block is hidden
+  context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  context.font = 'bold 48px monospace';
   context.textAlign = 'center';
-  context.fillText("Score: " + score, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 30);
-  context.fillText("Combo: " + comboCount, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 60);
-  context.fillText("Lines: " + linesTotal, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 90);
+  context.textBaseline = 'middle';
+  context.fillText("?", previewBoxX + previewBoxWidth / 2, previewBoxY + previewBoxHeight / 2);
+}
 
-  // Draw settings tab (always visible when game is started)
-  if (gameStarted && !gameOver) {
-    drawSettingsTab();
-  }
+// Calculate current drop speed for display
+let currentDropFrames = Math.max(5, 50 - (level - 1) * 2);
+if (bossSpeedActive) {
+  currentDropFrames = Math.max(2, currentDropFrames - 15);
+}
+
+// Score/Combo/Lines information box
+const scoreBoxWidth = colWidth - 40;
+const scoreBoxHeight = 140; // Increased height to fit drop speed
+const scoreBoxX = sidebarX;
+const scoreBoxY = previewBoxY + previewBoxHeight + 20;
+
+context.fillStyle = '#111';
+context.fillRect(scoreBoxX, scoreBoxY, scoreBoxWidth, scoreBoxHeight);
+context.strokeStyle = 'white';
+context.lineWidth = 2;
+context.strokeRect(scoreBoxX, scoreBoxY, scoreBoxWidth, scoreBoxHeight);
+
+// Draw score/combo/lines/drop speed text inside box
+context.fillStyle = 'white';
+context.font = 'bold 18px monospace';
+context.textAlign = 'center';
+context.fillText("Score: " + score, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 25);
+context.fillText("Combo: " + comboCount, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 50);
+context.fillText("Lines: " + linesTotal, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 75);
+//context.fillText("Drop Frame: " + currentDropFrames, scoreBoxX + scoreBoxWidth / 2, scoreBoxY + 100);
+
+// Draw settings tab (always visible when game is started)
+if (gameStarted && !gameOver) {
+  drawSettingsTab();
+}
 }
 
 // === Controls ===
