@@ -462,7 +462,7 @@ function placeTetromino() {
           healReduction = bossHealInterval * 0.125 * reductionMultiplier;
         }
         if (currentBoss >= 5) {
-          healReduction = bossHealInterval * 0.1 * reductionMultiplier; // Boss 5: 5%
+          healReduction = bossHealInterval * 0.1 * reductionMultiplier; // Boss 5: 10%
         }
         
         bossHealTimer = Math.max(0, bossHealTimer - healReduction);
@@ -777,7 +777,7 @@ function loop() {
             y: 10 * grid
           });
         } else if (currentBoss === 3) {
-          bossMaxHealth = 300; // Fourth boss has 1000 max HP
+          bossMaxHealth = 250; // Fourth boss has 1000 max HP
           comboTexts.push({
             text: 'FOURTH BOSS APPEAR!',
             timer: 180,
@@ -864,29 +864,33 @@ function loop() {
     }
   }
 
-  // Update boss speed ability for third boss and higher
-  if (!gameOver && !paused && currentBoss >= 2 && bossAlive) {
+// Update boss speed ability for third boss and higher
+if (!gameOver && !paused && currentBoss >= 2 && bossAlive) {
+  // ONLY increment timer when ability is NOT active
+  if (!bossSpeedActive) {
     bossSpeedTimer++;
-    if (bossSpeedTimer >= bossSpeedInterval && !bossSpeedActive) {
-      bossSpeedActive = true;
-      bossSpeedDuration = currentBoss === 4 ? 720 : bossSpeedMaxDuration; // Enhanced for final boss
-      bossSpeedTimer = 0;
+  }
+  
+  if (bossSpeedTimer >= bossSpeedInterval && !bossSpeedActive) {
+    bossSpeedActive = true;
+    bossSpeedDuration = currentBoss === 4 ? 720 : bossSpeedMaxDuration; // Enhanced for final boss
+    bossSpeedTimer = 0;
     comboTexts.push({
-    text: `BOSS SPEED UP YOUR BLOCK!!`,
-    timer: 90,
-    x: 5 * grid,
-    y: 14 * grid
-  });
-    }
-    
-    // Update speed duration
-    if (bossSpeedActive) {
-      bossSpeedDuration--;
-      if (bossSpeedDuration <= 0) {
-        bossSpeedActive = false;
-      }
+      text: `BOSS SPEED UP YOUR BLOCK!!`,
+      timer: 90,
+      x: 5 * grid,
+      y: 14 * grid
+    });
+  }
+  
+  // Update speed duration
+  if (bossSpeedActive) {
+    bossSpeedDuration--;
+    if (bossSpeedDuration <= 0) {
+      bossSpeedActive = false;
     }
   }
+}
 
   // Update boss immune ability for fourth boss and higher
   if (!gameOver && !paused && currentBoss >= 3 && bossAlive) {
